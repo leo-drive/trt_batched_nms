@@ -24,12 +24,12 @@ static const char * NMS_PLUGIN_NAME{"TRTBatchedNMS"};
 }  // namespace
 
 TRTBatchedNMS::TRTBatchedNMS(const std::string & name, NMSParameters params, bool returnIndex)
-: TRTPluginBase(name), param(params), mReturnIndex(returnIndex)
+: mLayerName(name), param(params), mReturnIndex(returnIndex)
 {
 }
 
 TRTBatchedNMS::TRTBatchedNMS(const std::string & name, const void * data, size_t length)
-: TRTPluginBase(name)
+: mLayerName(name)
 {
   deserialize_value(&data, &length, &param);
   deserialize_value(&data, &length, &mClipBoxes);

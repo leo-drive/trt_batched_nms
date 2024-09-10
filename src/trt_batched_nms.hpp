@@ -3,8 +3,10 @@
 // https://github.com/NVIDIA/TensorRT/tree/master/plugin/batchedNMSPlugin
 #ifndef TRT_BATCHED_NMS__BATCHED_NMS__TRT_BATCHED_NMS_HPP_
 #define TRT_BATCHED_NMS__BATCHED_NMS__TRT_BATCHED_NMS_HPP_
+#include "NvInferRuntime.h"
+#include "NvInferVersion.h"
+#include "trt_batched_nms/trt_plugin_helper.hpp"
 #include "NvInferPluginUtils.h"
-#include "trt_batched_nms/trt_plugin_base.hpp"
 
 #include <memory>
 #include <string>
@@ -13,14 +15,22 @@
 namespace mmdeploy
 {
 
+#if NV_TENSORRT_MAJOR > 7
+#define TRT_NOEXCEPT noexcept
+#else
+#define TRT_NOEXCEPT
+#endif
+
 enum NMSReturnType { RETURN_DETS = 1, RETURN_INDEX = 1 << 1 };
 
-class TRTBatchedNMS : public TRTPluginBase
+class TRTBatchedNMS : public nvinfer1::IPluginV2DynamicExt
 {
 public:
   TRTBatchedNMS(const std::string & name, nvinfer1::plugin::NMSParameters param, bool returnIndex);
 
   TRTBatchedNMS(const std::string & name, const void * data, size_t length);
+
+  explicit TRTBatchedNMS(const std::string & name) : mLayerName(name) {}
 
   ~TRTBatchedNMS() TRT_NOEXCEPT override = default;
 
@@ -62,13 +72,32 @@ public:
 
   void setClipParam(bool clip);
 
+    // IPluginV2 Methods
+    int initialize() TRT_NOEXCEPT override { return STATUS_SUCCESS; }
+    void terminate() TRT_NOEXCEPT override {}
+    void destroy() TRT_NOEXCEPT override { delete this; }
+    void setPluginNamespace(const char * pluginNamespace) TRT_NOEXCEPT override
+    {
+        mNamespace = pluginNamespace;
+    }
+    const char * getPluginNamespace() const TRT_NOEXCEPT override { return mNamespace.c_str(); }
+    void attachToContext(
+            [[maybe_unused]] cudnnContext * cudnnContext, [[maybe_unused]] cublasContext * cublasContext,
+            [[maybe_unused]] nvinfer1::IGpuAllocator * gpuAllocator) TRT_NOEXCEPT override
+    {
+    }
+    void detachFromContext() TRT_NOEXCEPT override {}
+
 private:
+  const std::string mLayerName;
+  std::string mNamespace;
+
   nvinfer1::plugin::NMSParameters param{};
   bool mClipBoxes{};
   bool mReturnIndex{};
 };
 
-class TRTBatchedNMSCreator : public TRTPluginCreatorBase
+class TRTBatchedNMSCreator : public nvinfer1::IPluginCreator
 {
 public:
   TRTBatchedNMSCreator();
@@ -79,11 +108,25 @@ public:
 
   const char * getPluginVersion() const TRT_NOEXCEPT override;
 
+  const char * getPluginNamespace() const TRT_NOEXCEPT override { return mNamespace.c_str(); }
+
+  const nvinfer1::PluginFieldCollection * getFieldNames() TRT_NOEXCEPT override { return &mFC; }
+
   nvinfer1::IPluginV2DynamicExt * createPlugin(
     const char * name, const nvinfer1::PluginFieldCollection * fc) TRT_NOEXCEPT override;
 
   nvinfer1::IPluginV2DynamicExt * deserializePlugin(
     const char * name, const void * serialData, size_t serialLength) TRT_NOEXCEPT override;
+
+  void setPluginNamespace(const char * pluginNamespace) TRT_NOEXCEPT override
+  {
+      mNamespace = pluginNamespace;
+  }
+
+private:
+  nvinfer1::PluginFieldCollection mFC;
+  std::vector<nvinfer1::PluginField> mPluginAttributes;
+  std::string mNamespace;
 };
 }  // namespace mmdeploy
 #endif  // TRT_BATCHED_NMS__BATCHED_NMS__TRT_BATCHED_NMS_HPP_
