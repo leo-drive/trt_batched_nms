@@ -6,7 +6,7 @@ by mmdeploy.
 **Original source code:**
 
 - https://github.com/NVIDIA/TensorRT/tree/release/10.3/plugin/batchedNMSPlugin
-- https://github.com/open-mmlab/mmdeploy/tree/bc75c9d6c8940aa03d0e1e5b5962bd930478ba77/csrc/mmdeploy/backend_ops/tensorrt/batched_nms
+- https://github.com/open-mmlab/mmdeploy/tree/main/csrc/mmdeploy/backend_ops/tensorrt/batched_nms
 
 ## Compile the package:
 
