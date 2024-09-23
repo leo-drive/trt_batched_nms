@@ -3,9 +3,10 @@
 // https://github.com/NVIDIA/TensorRT/tree/master/plugin/batchedNMSPlugin
 #ifndef TRT_BATCHED_NMS__BATCHED_NMS__TRT_BATCHED_NMS_HPP_
 #define TRT_BATCHED_NMS__BATCHED_NMS__TRT_BATCHED_NMS_HPP_
+#include "trt_batched_nms/trt_plugin_helper.hpp"
+
 #include "NvInferRuntime.h"
 #include "NvInferVersion.h"
-#include "trt_batched_nms/trt_plugin_helper.hpp"
 #include "NvInferPluginUtils.h"
 
 #include <memory>
@@ -26,7 +27,7 @@ enum NMSReturnType { RETURN_DETS = 1, RETURN_INDEX = 1 << 1 };
 class TRTBatchedNMS : public nvinfer1::IPluginV2DynamicExt
 {
 public:
-  TRTBatchedNMS(const std::string & name, nvinfer1::plugin::NMSParameters param, bool returnIndex);
+  TRTBatchedNMS(const std::string & name, nvinfer1::plugin::NMSParameters params, bool returnIndex);
 
   TRTBatchedNMS(const std::string & name, const void * data, size_t length);
 
@@ -68,7 +69,7 @@ public:
   nvinfer1::IPluginV2DynamicExt * clone() const TRT_NOEXCEPT override;
 
   nvinfer1::DataType getOutputDataType(
-    int index, const nvinfer1::DataType * inputType, int nbInputs) const TRT_NOEXCEPT override;
+    int index, const nvinfer1::DataType * inputTypes, int nbInputs) const TRT_NOEXCEPT override;
 
   void setClipParam(bool clip);
 
