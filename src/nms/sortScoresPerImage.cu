@@ -31,17 +31,21 @@ pluginStatus_t sortScoresPerImage_gpu(
 // sortScoresPerImage LAUNCH CONFIG
 typedef pluginStatus_t (*sspiFunc)(
   cudaStream_t, const int, const int, void *, void *, void *, void *, void *);
+
 struct sspiLaunchConfig
 {
   DataType t_score;
   sspiFunc function;
 
   sspiLaunchConfig(DataType t_score) : t_score(t_score) {}
+
   sspiLaunchConfig(DataType t_score, sspiFunc function) : t_score(t_score), function(function) {}
+
   bool operator==(const sspiLaunchConfig & other) { return t_score == other.t_score; }
 };
 
 static std::vector<sspiLaunchConfig> sspiFuncVec;
+
 bool sspiInit()
 {
   sspiFuncVec.push_back(sspiLaunchConfig(DataType::kFLOAT, sortScoresPerImage_gpu<float>));

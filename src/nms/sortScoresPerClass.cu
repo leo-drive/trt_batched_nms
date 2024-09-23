@@ -9,10 +9,12 @@
 #include <vector>
 
 template <typename T_SCORE, unsigned nthds_per_cta>
-__launch_bounds__(nthds_per_cta) __global__ void prepareSortData(
-  const int num, const int num_classes, const int num_preds_per_class,
-  const int background_label_id, const float confidence_threshold, T_SCORE * conf_scores_gpu,
-  T_SCORE * temp_scores, int * temp_idx, int * d_offsets)
+__launch_bounds__(nthds_per_cta)
+
+  __global__ void prepareSortData(
+    const int num, const int num_classes, const int num_preds_per_class,
+    const int background_label_id, const float confidence_threshold, T_SCORE * conf_scores_gpu,
+    T_SCORE * temp_scores, int * temp_idx, int * d_offsets)
 {
   // Prepare scores data for sort
   const int cur_idx = blockIdx.x * nthds_per_cta + threadIdx.x;
@@ -90,17 +92,21 @@ pluginStatus_t sortScoresPerClass_gpu(
 // sortScoresPerClass LAUNCH CONFIG
 typedef pluginStatus_t (*sspcFunc)(
   cudaStream_t, const int, const int, const int, const int, const float, void *, void *, void *);
+
 struct sspcLaunchConfig
 {
   DataType t_score;
   sspcFunc function;
 
   sspcLaunchConfig(DataType t_score) : t_score(t_score) {}
+
   sspcLaunchConfig(DataType t_score, sspcFunc function) : t_score(t_score), function(function) {}
+
   bool operator==(const sspcLaunchConfig & other) { return t_score == other.t_score; }
 };
 
 static std::vector<sspcLaunchConfig> sspcFuncVec;
+
 bool sspcInit()
 {
   sspcFuncVec.push_back(sspcLaunchConfig(DataType::kFLOAT, sortScoresPerClass_gpu<float>));

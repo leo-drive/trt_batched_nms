@@ -55,7 +55,9 @@ size_t calculateTotalWorkspaceSize(size_t * workspaces, int count)
 using nvinfer1::DataType;
 
 template <unsigned nthds_per_cta>
-__launch_bounds__(nthds_per_cta) __global__
+__launch_bounds__(nthds_per_cta)
+
+  __global__
   void setUniformOffsets_kernel(const int num_segments, const int offset, int * d_offsets)
 {
   const int idx = blockIdx.x * nthds_per_cta + threadIdx.x;

@@ -5,6 +5,7 @@
 #define TRT_BATCHED_NMS__COMMON__NMS__CUB_HELPER_H_
 
 #include "kernel.h"
+
 template <typename KeyT, typename ValueT>
 size_t cubSortPairsWorkspaceSize(int num_items, int num_segments)
 {

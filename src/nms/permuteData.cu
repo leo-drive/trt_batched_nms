@@ -6,9 +6,11 @@
 #include <vector>
 
 template <typename Dtype, unsigned nthds_per_cta>
-__launch_bounds__(nthds_per_cta) __global__ void permuteData_kernel(
-  const int nthreads, const int num_classes, const int num_data, const int num_dim,
-  bool confSigmoid, const Dtype * data, Dtype * new_data)
+__launch_bounds__(nthds_per_cta)
+
+  __global__ void permuteData_kernel(
+    const int nthreads, const int num_classes, const int num_data, const int num_dim,
+    bool confSigmoid, const Dtype * data, Dtype * new_data)
 {
   // data format: [batch_size, num_data, num_classes, num_dim]
   for (int index = blockIdx.x * nthds_per_cta + threadIdx.x; index < nthreads;
@@ -49,7 +51,9 @@ struct pdLaunchConfig
   pdFunc function;
 
   pdLaunchConfig(DataType t_data) : t_data(t_data) {}
+
   pdLaunchConfig(DataType t_data, pdFunc function) : t_data(t_data), function(function) {}
+
   bool operator==(const pdLaunchConfig & other) { return t_data == other.t_data; }
 };
 

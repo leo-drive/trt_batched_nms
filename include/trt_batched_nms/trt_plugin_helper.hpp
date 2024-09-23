@@ -1,6 +1,7 @@
 // Copyright (c) OpenMMLab. All rights reserved.
 #ifndef TRT_BATCHED_NMS__COMMON__TRT_PLUGIN_HELPER_HPP_
 #define TRT_BATCHED_NMS__COMMON__TRT_PLUGIN_HELPER_HPP_
+
 #include "NvInferRuntime.h"
 
 #include <cudnn.h>
@@ -140,7 +141,7 @@ inline unsigned int getElementSize(nvinfer1::DataType t)
       return 4;
     case nvinfer1::DataType::kHALF:
       return 2;
-    // case nvinfer1::DataType::kBOOL:
+      // case nvinfer1::DataType::kBOOL:
     case nvinfer1::DataType::kINT8:
       return 1;
     default:

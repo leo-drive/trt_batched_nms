@@ -2,27 +2,27 @@ cmake_minimum_required(VERSION 3.17)
 project(trt_batched_nms)
 
 find_package(tensorrt_common)
-if(NOT ${tensorrt_common_FOUND})
-  message(WARNING "The tensorrt_common package is not found. Please check its dependencies.")
-  return()
-endif()
+if (NOT ${tensorrt_common_FOUND})
+    message(WARNING "The tensorrt_common package is not found. Please check its dependencies.")
+    return()
+endif ()
 
 find_package(autoware_cmake REQUIRED)
 autoware_package()
 
 include(CheckLanguage)
 check_language(CUDA)
-if(CMAKE_CUDA_COMPILER)
-  enable_language(CUDA)
-else()
-  message(WARNING "CUDA is not found. preprocess acceleration using CUDA will not be available.")
-endif()
+if (CMAKE_CUDA_COMPILER)
+    enable_language(CUDA)
+else ()
+    message(WARNING "CUDA is not found. preprocess acceleration using CUDA will not be available.")
+endif ()
 
 find_library(NVINFER_LIB nvinfer PATHS ${TENSORRT_ROOT}/lib)
 find_library(NVPLUGIN_LIB nvinfer_plugin PATHS ${TENSORRT_ROOT}/lib)
 
 include_directories(
-    include
+        include
 )
 
 cuda_add_library(${PROJECT_NAME}_plugin SHARED
@@ -42,9 +42,9 @@ install(TARGETS ${PROJECT_NAME}_plugin
         LIBRARY DESTINATION lib
 )
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
+if (BUILD_TESTING)
+    find_package(ament_lint_auto REQUIRED)
+    ament_lint_auto_find_test_dependencies()
+endif ()
 
 ament_package()

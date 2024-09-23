@@ -19,7 +19,9 @@ template <typename T>
 struct Bbox
 {
   T xmin, ymin, xmax, ymax;
+
   Bbox(T xmin, T ymin, T xmax, T ymax) : xmin(xmin), ymin(ymin), xmax(xmax), ymax(ymax) {}
+
   Bbox() = default;
 };
 

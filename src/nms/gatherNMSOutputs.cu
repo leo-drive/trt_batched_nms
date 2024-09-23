@@ -7,10 +7,13 @@
 #include <vector>
 
 template <typename T_BBOX, typename T_SCORE, bool rotated, unsigned nthds_per_cta>
-__launch_bounds__(nthds_per_cta) __global__ void gatherNMSOutputs_kernel(
-  const bool shareLocation, const int numImages, const int numPredsPerClass, const int numClasses,
-  const int topK, const int keepTopK, const int * indices, const T_SCORE * scores,
-  const T_BBOX * bboxData, T_BBOX * nmsedDets, int * nmsedLabels, int * nmsedIndex, bool clipBoxes)
+__launch_bounds__(nthds_per_cta)
+
+  __global__ void gatherNMSOutputs_kernel(
+    const bool shareLocation, const int numImages, const int numPredsPerClass, const int numClasses,
+    const int topK, const int keepTopK, const int * indices, const T_SCORE * scores,
+    const T_BBOX * bboxData, T_BBOX * nmsedDets, int * nmsedLabels, int * nmsedIndex,
+    bool clipBoxes)
 {
   if (keepTopK > topK) return;
   for (int i = blockIdx.x * nthds_per_cta + threadIdx.x; i < numImages * keepTopK;
@@ -115,6 +118,7 @@ pluginStatus_t gatherNMSOutputs_gpu(
 typedef pluginStatus_t (*nmsOutFunc)(
   cudaStream_t, const bool, const int, const int, const int, const int, const int, const void *,
   const void *, const void *, void *, void *, void *, bool);
+
 struct nmsOutLaunchConfig
 {
   DataType t_bbox;
@@ -126,10 +130,12 @@ struct nmsOutLaunchConfig
   : t_bbox(t_bbox), t_score(t_score), rotated(rotated)
   {
   }
+
   nmsOutLaunchConfig(DataType t_bbox, DataType t_score, bool rotated, nmsOutFunc function)
   : t_bbox(t_bbox), t_score(t_score), rotated(rotated), function(function)
   {
   }
+
   bool operator==(const nmsOutLaunchConfig & other)
   {
     return t_bbox == other.t_bbox && t_score == other.t_score && rotated == other.rotated;

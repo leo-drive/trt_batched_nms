@@ -3,6 +3,7 @@
 // https://github.com/NVIDIA/TensorRT/tree/master/plugin/batchedNMSPlugin
 #ifndef TRT_BATCHED_NMS__COMMON__NMS__BATCHED_NMS_KERNEL_HPP_
 #define TRT_BATCHED_NMS__COMMON__NMS__BATCHED_NMS_KERNEL_HPP_
+
 #include "cuda_runtime_api.h"
 #include "kernel.h"
 

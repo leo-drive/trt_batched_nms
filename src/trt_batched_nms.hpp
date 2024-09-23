@@ -3,11 +3,11 @@
 // https://github.com/NVIDIA/TensorRT/tree/master/plugin/batchedNMSPlugin
 #ifndef TRT_BATCHED_NMS__BATCHED_NMS__TRT_BATCHED_NMS_HPP_
 #define TRT_BATCHED_NMS__BATCHED_NMS__TRT_BATCHED_NMS_HPP_
-#include "trt_batched_nms/trt_plugin_helper.hpp"
 
+#include "NvInferPluginUtils.h"
 #include "NvInferRuntime.h"
 #include "NvInferVersion.h"
-#include "NvInferPluginUtils.h"
+#include "trt_batched_nms/trt_plugin_helper.hpp"
 
 #include <memory>
 #include <string>
@@ -73,21 +73,27 @@ public:
 
   void setClipParam(bool clip);
 
-    // IPluginV2 Methods
-    int initialize() TRT_NOEXCEPT override { return STATUS_SUCCESS; }
-    void terminate() TRT_NOEXCEPT override {}
-    void destroy() TRT_NOEXCEPT override { delete this; }
-    void setPluginNamespace(const char * pluginNamespace) TRT_NOEXCEPT override
-    {
-        mNamespace = pluginNamespace;
-    }
-    const char * getPluginNamespace() const TRT_NOEXCEPT override { return mNamespace.c_str(); }
-    void attachToContext(
-            [[maybe_unused]] cudnnContext * cudnnContext, [[maybe_unused]] cublasContext * cublasContext,
-            [[maybe_unused]] nvinfer1::IGpuAllocator * gpuAllocator) TRT_NOEXCEPT override
-    {
-    }
-    void detachFromContext() TRT_NOEXCEPT override {}
+  // IPluginV2 Methods
+  int initialize() TRT_NOEXCEPT override { return STATUS_SUCCESS; }
+
+  void terminate() TRT_NOEXCEPT override {}
+
+  void destroy() TRT_NOEXCEPT override { delete this; }
+
+  void setPluginNamespace(const char * pluginNamespace) TRT_NOEXCEPT override
+  {
+    mNamespace = pluginNamespace;
+  }
+
+  const char * getPluginNamespace() const TRT_NOEXCEPT override { return mNamespace.c_str(); }
+
+  void attachToContext(
+    [[maybe_unused]] cudnnContext * cudnnContext, [[maybe_unused]] cublasContext * cublasContext,
+    [[maybe_unused]] nvinfer1::IGpuAllocator * gpuAllocator) TRT_NOEXCEPT override
+  {
+  }
+
+  void detachFromContext() TRT_NOEXCEPT override {}
 
 private:
   const std::string mLayerName;
@@ -121,7 +127,7 @@ public:
 
   void setPluginNamespace(const char * pluginNamespace) TRT_NOEXCEPT override
   {
-      mNamespace = pluginNamespace;
+    mNamespace = pluginNamespace;
   }
 
 private:

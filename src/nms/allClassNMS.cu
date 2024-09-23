@@ -72,7 +72,7 @@ __device__ float jaccardOverlap(
 /********** new NMS for only score and index array **********/
 
 // clang-format off
-template <typename T_SCORE, typename T_BBOX, int TSIZE>
+template<typename T_SCORE, typename T_BBOX, int TSIZE>
 __global__ void
 #ifdef __CUDA_ARCH__
 #if __CUDA_ARCH__ == 620 || __CUDA_ARCH__ == 530
@@ -80,12 +80,12 @@ __launch_bounds__(512)
 #endif
 #endif
 allClassNMS_kernel(const int num, const int num_classes, const int num_preds_per_class,
-                    const int top_k, const float nms_threshold, const bool share_location,
-                    const bool isNormalized,
-                    T_BBOX *bbox_data,  // bbox_data should be float to preserve
-                                        // location information
-                    T_SCORE *beforeNMS_scores, int *beforeNMS_index_array,
-                    T_SCORE *afterNMS_scores, int *afterNMS_index_array, bool flipXY = false) {
+                   const int top_k, const float nms_threshold, const bool share_location,
+                   const bool isNormalized,
+                   T_BBOX *bbox_data,  // bbox_data should be float to preserve
+        // location information
+                   T_SCORE *beforeNMS_scores, int *beforeNMS_index_array,
+                   T_SCORE *afterNMS_scores, int *afterNMS_index_array, bool flipXY = false) {
   // clang-format on
   //__shared__ bool kept_bboxinfo_flag[CAFFE_CUDA_NUM_THREADS * TSIZE];
   __shared__ bool kept_bboxinfo_flag[TSIZE * BS];
@@ -235,10 +235,12 @@ struct nmsLaunchConfigSSD
   nmsFunc function;
 
   nmsLaunchConfigSSD(DataType t_score, DataType t_bbox) : t_score(t_score), t_bbox(t_bbox) {}
+
   nmsLaunchConfigSSD(DataType t_score, DataType t_bbox, nmsFunc function)
   : t_score(t_score), t_bbox(t_bbox), function(function)
   {
   }
+
   bool operator==(const nmsLaunchConfigSSD & other)
   {
     return t_score == other.t_score && t_bbox == other.t_bbox;
